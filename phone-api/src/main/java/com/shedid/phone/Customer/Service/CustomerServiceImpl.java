@@ -2,13 +2,12 @@ package com.shedid.phone.Customer.Service;
 
 import com.shedid.phone.Customer.Model.Customer;
 import com.shedid.phone.Customer.Repository.CustomerRepository;
+import com.shedid.phone.Customer.Request.CustomerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service(value = "customerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -21,14 +20,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<Customer> findAllCustomers(int page, int size, String sortDir, String sort) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
-        return repository.findAll(pageRequest);
+    public Page<Customer> findAllCustomersByPhoneCode(CustomerRequest customerRequest) {
+        PageRequest pageRequest = PageRequest.of(
+                customerRequest.getPage(), customerRequest.getSize(),
+                Sort.Direction.fromString(customerRequest.getSortDir()),
+                customerRequest.getSort()
+        );
+        return repository.findByPhone(customerRequest.getCode(), pageRequest);
     }
 
     @Override
-    public Page<Customer> findAllCustomersByPhoneCode(String code, int page, int size, String sortDir, String sort) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
-        return repository.findByPhone(code, pageRequest);
+    public Page<Customer> validatePhone(Page<Customer> customers, String regex) {
+        customers.forEach(c -> c.setValid(c.getPhone().matches(regex)));
+        return customers;
     }
 }

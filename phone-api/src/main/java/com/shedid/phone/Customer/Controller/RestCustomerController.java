@@ -1,5 +1,6 @@
 package com.shedid.phone.Customer.Controller;
 
+import com.shedid.phone.Country.Service.CountryService;
 import com.shedid.phone.Customer.Model.Customer;
 import com.shedid.phone.Customer.Request.CustomerRequest;
 import com.shedid.phone.Customer.Response.CustomerResponse;
@@ -7,14 +8,15 @@ import com.shedid.phone.Customer.Service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 
 @CrossOrigin()
 @RestController
+@Validated
 @RequestMapping("/customers")
 public class RestCustomerController {
 
@@ -22,50 +24,20 @@ public class RestCustomerController {
 
     private final CustomerService service;
 
-    private final Map<String, String> country;
+    private final CountryService countryService;
 
-    public RestCustomerController(CustomerService service) {
+    public RestCustomerController(CustomerService service, CountryService countryService) {
         this.service = service;
-        this.country = new HashMap<>();
-        this.country.put("Cameroon", "\\(237\\)\\ ?[2368]\\d{7,8}$");
-        this.country.put("Ethiopia", "\\(251\\)\\ ?[1-59]\\d{8}$");
-        this.country.put("Morocco", "\\(212\\)\\ ?[5-9]\\d{8}$");
-        this.country.put("Mozambique", "\\(258\\)\\ ?[28]\\d{7,8}$");
-        this.country.put("Uganda", "\\(256\\)\\ ?\\d{9}$");
+        this.countryService = countryService;
     }
 
-    @GetMapping(value = "/get/all")
-    public CustomerResponse getAllCustomer(@RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
-        Page<Customer> customers = this.selectGettingUserMethode(customerRequest, !customerRequest.getCode().isEmpty());
-        this.validatePhone(customers, this.country.get(customerRequest.getCountry()));
+    @PostMapping(value = "/get/all")
+    public CustomerResponse getAllCustomer(@Valid @RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
+        Page<Customer> customers = this.service.findAllCustomersByPhoneCode(customerRequest);
+        this.service.validatePhone(customers, this.countryService.findRegexByName(customerRequest.getCountry()));
         log.info("[+] Get all customers: {}", customers + " by " + customerRequest.getCode());
-        response.setStatus(200);
+//        response.setStatus(200);
         return getCustomerResponse(customers);
-    }
-
-    private Page<Customer> selectGettingUserMethode(CustomerRequest customerRequest, boolean byPhone) {
-        Page<Customer> customers;
-        if (byPhone) {
-            customers = service.findAllCustomersByPhoneCode(
-                    customerRequest.getCode(),
-                    customerRequest.getPage(),
-                    customerRequest.getSize(),
-                    customerRequest.getSortDir(),
-                    customerRequest.getSort()
-            );
-        } else {
-            customers = service.findAllCustomers(
-                    customerRequest.getPage(),
-                    customerRequest.getSize(),
-                    customerRequest.getSortDir(),
-                    customerRequest.getSort()
-            );
-        }
-        return customers;
-    }
-
-    private void validatePhone(Page<Customer> customers, String regex) {
-        customers.forEach(c -> c.setValid(c.getPhone().matches(regex)));
     }
 
     private CustomerResponse getCustomerResponse(Page<Customer> customers) {
