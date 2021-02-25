@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @CrossOrigin()
 @RestController
 @Validated
-@RequestMapping("/customers")
+@RequestMapping("/api/customers")
 public class RestCustomerController {
 
     private static final Logger log = LoggerFactory.getLogger(RestCustomerController.class);
@@ -31,7 +31,7 @@ public class RestCustomerController {
         this.countryService = countryService;
     }
 
-    @PostMapping(value = "/get/all")
+    @GetMapping(value = "/get/all")
     public CustomerResponse getAllCustomer(@Valid @RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
         Page<Customer> customers = this.service.findAllCustomersByPhoneCode(customerRequest);
         this.service.validatePhone(customers, this.countryService.findRegexByName(customerRequest.getCountry()));

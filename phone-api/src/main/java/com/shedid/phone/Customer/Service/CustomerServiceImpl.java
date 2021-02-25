@@ -31,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Page<Customer> validatePhone(Page<Customer> customers, String regex) {
-        customers.forEach(c -> c.setValid(c.getPhone().matches(regex)));
+        customers.forEach(c -> c.setPhoneValid(c.getPhone().matches(regex)));
         return customers;
     }
 }

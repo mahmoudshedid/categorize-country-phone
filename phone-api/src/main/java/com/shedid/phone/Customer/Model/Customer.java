@@ -20,7 +20,7 @@ public class Customer extends BaseEntity {
 
     @JsonInclude()
     @Transient
-    private boolean valid;
+    private boolean phoneValid;
 
     public String getName() {
         return name;
@@ -30,11 +30,11 @@ public class Customer extends BaseEntity {
         return phone;
     }
 
-    public boolean isValid() {
-        return valid;
+    public boolean isPhoneValid() {
+        return phoneValid;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
+    public void setPhoneValid(boolean phoneValid) {
+        this.phoneValid = phoneValid;
     }
 }
