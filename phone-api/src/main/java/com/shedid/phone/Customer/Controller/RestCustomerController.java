@@ -36,17 +36,32 @@ public class RestCustomerController {
 
     @GetMapping(value = "/get/all")
     public CustomerResponse getAllCustomer(@RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
-        Page<Customer> customers = service.findAllCustomersByPhoneCode(
-                customerRequest.getCode(),
-                customerRequest.getPage(),
-                customerRequest.getSize(),
-                customerRequest.getSortDir(),
-                customerRequest.getSort()
-        );
+        Page<Customer> customers = this.selectGettingUserMethode(customerRequest, !customerRequest.getCode().isEmpty());
         this.validatePhone(customers, this.country.get(customerRequest.getCountry()));
         log.info("[+] Get all customers: {}", customers + " by " + customerRequest.getCode());
         response.setStatus(200);
         return getCustomerResponse(customers);
+    }
+
+    private Page<Customer> selectGettingUserMethode(CustomerRequest customerRequest, boolean byPhone) {
+        Page<Customer> customers;
+        if (byPhone) {
+            customers = service.findAllCustomersByPhoneCode(
+                    customerRequest.getCode(),
+                    customerRequest.getPage(),
+                    customerRequest.getSize(),
+                    customerRequest.getSortDir(),
+                    customerRequest.getSort()
+            );
+        } else {
+            customers = service.findAllCustomers(
+                    customerRequest.getPage(),
+                    customerRequest.getSize(),
+                    customerRequest.getSortDir(),
+                    customerRequest.getSort()
+            );
+        }
+        return customers;
     }
 
     private void validatePhone(Page<Customer> customers, String regex) {
