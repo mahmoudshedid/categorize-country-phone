@@ -31,8 +31,8 @@ public class RestCustomerController {
         this.countryService = countryService;
     }
 
-    @GetMapping(value = "/get/all")
-    public CustomerResponse getAllCustomer(@Valid @RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
+    @PostMapping(value = "/get/all")
+    public CustomerResponse postAllCustomer(@Valid @RequestBody CustomerRequest customerRequest, HttpServletResponse response) {
         Page<Customer> customers = this.service.findAllCustomersByPhoneCode(customerRequest);
         this.service.validatePhone(customers, this.countryService.findRegexByName(customerRequest.getCountry()));
         log.info("[+] Get all customers: {}", customers + " by " + customerRequest.getCode());

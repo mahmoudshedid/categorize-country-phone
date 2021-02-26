@@ -1,21 +1,23 @@
-import { RequestCustomerSerializer } from '../models/request.customer.serializer';
+import { CustomerSerializer } from '../models/response.customer.serializer';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IRequestCustomer } from '../models/request.customer';
+import { ICustomer } from '../models/customer.interface';
 import { ResourceService } from '../../common/services/resource.service';
 import { environment } from '../../../environments/environment';
+import { ResponsePageCustomerSerializer } from '../models/response.page.customer.serializer';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerService extends ResourceService<IRequestCustomer> {
+export class CustomerService extends ResourceService<ICustomer> {
 
   constructor(httpClient: HttpClient) {
     super(
       httpClient,
       environment.BASE_URL,
       environment.CUSTOMER_ENDPOINT,
-      new RequestCustomerSerializer(),
+      new CustomerSerializer(),
+      new ResponsePageCustomerSerializer,
       'Request Customer'
     );
   }
