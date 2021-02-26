@@ -37,22 +37,23 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   resultsLength = 0;
   isLoadingResults = true;
+  defaultSelectedOption = 0;
 
   constructor(private customerService: CustomerService) {
   }
 
   ngOnInit(): void {
-    this.requestData.code = '237';
-    this.requestData.country = 'Cameroon';
+    this.requestData.code = this.countries[0].code;
+    this.requestData.country = this.countries[0].country;
     this.requestData.page = 0;
     this.requestData.size = 5;
     this.requestData.sortDir = 'asc';
     this.requestData.sort = 'name';
 
-    this.initCustomers();
+    this.getCustomers();
   }
 
-  private initCustomers()  {
+  private getCustomers(): void  {
     this.customerService.list(this.requestData).pipe(
       map(values => {
         this.isLoadingResults = false;
@@ -64,8 +65,15 @@ export class CustomerComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  private setPageData() {
+  private setPageData(): void {
     console.log(this.customerService.pageResponse);
+  }
+
+  countryOnChange(value: number): void {
+    this.requestData.code = this.countries[value].code;
+    this.requestData.country = this.countries[value].country;
+    this.isLoadingResults = true;
+    this.getCustomers();
   }
 
   ngOnDestroy(): void {

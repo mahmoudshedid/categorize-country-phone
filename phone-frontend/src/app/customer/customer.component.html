@@ -1,17 +1,14 @@
 <div class="container mat-elevation-z8">
     <div class="loading-shade" *ngIf="isLoadingResults">
         <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-        <div class="description">
-            Getting Customers Data...
-        </div>
     </div>
 
     <div class="table-container">
         <h4>Filter By Country:</h4>
         <mat-form-field appearance="fill">
             <mat-label>Country</mat-label>
-            <mat-select>
-                <mat-option *ngFor="let country of countries" [value]="country.code">
+            <mat-select [value]="defaultSelectedOption" (selectionChange)="countryOnChange($event.value)">
+                <mat-option *ngFor="let country of countries" [value]="country.id">
                     {{country.country}}
                 </mat-option>
             </mat-select>
