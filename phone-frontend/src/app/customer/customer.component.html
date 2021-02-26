@@ -1,1 +1,51 @@
-<p>customer works!</p>
+<div class="container mat-elevation-z8">
+    <div class="loading-shade" *ngIf="isLoadingResults">
+        <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        <div class="description">
+            Getting Customers Data...
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h4>Filter By Country:</h4>
+        <mat-form-field appearance="fill">
+            <mat-label>Country</mat-label>
+            <mat-select>
+                <mat-option *ngFor="let country of countries" [value]="country.code">
+                    {{country.country}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> No. </th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="phone">
+                <th mat-header-cell *matHeaderCellDef> Phone </th>
+                <td mat-cell *matCellDef="let element"> {{element.phone}} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="phoneValid">
+                <th mat-header-cell *matHeaderCellDef> Phone Valid </th>
+                <td mat-cell *matCellDef="let element"> {{element.phoneValid}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons></mat-paginator>
+</div>
